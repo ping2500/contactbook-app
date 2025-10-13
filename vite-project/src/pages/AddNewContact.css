@@ -1,0 +1,105 @@
+/* src/pages/AddNewContact.css */
+
+/* --- 1. Full Screen Container --- */
+.add-contact-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  /* Use a similar background to your ContactList page or a simple light color */
+  background-color: #f4f7f6;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: "Arial", sans-serif;
+}
+
+/* --- 2. Form Card --- */
+.form-card {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+.form-header {
+  font-size: 1.8em;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #333;
+  text-align: center;
+}
+
+/* --- 3. Form Layout and Inputs --- */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Spacing between elements */
+}
+
+.contact-form label {
+  font-size: 0.9em;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: -5px; /* Adjust spacing above input */
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1em;
+  color: #333;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+/* --- 4. Buttons --- */
+.submit-button {
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.primary-button {
+  background-color: #28a745; /* Green color for 'Add' or 'Save' */
+  color: white;
+}
+
+.primary-button:hover {
+  background-color: #1e7e34;
+}
+
+.cancel-link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.95em;
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cancel-link:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+/* --- Optional: Image Preview Styling (for UpdateContact) --- */
+.contact-form img {
+  border: 2px solid #ddd;
+}

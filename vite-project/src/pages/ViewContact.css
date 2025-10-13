@@ -1,0 +1,198 @@
+/* src/pages/ViewContact.css */
+
+.view-contact-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #5847c6;
+  /* Dark blue background */
+  color: white;
+  font-family: "Poppins", sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- Decorative Shapes & Lines from Image (REMAINS THE SAME) --- */
+.top-left-shape {
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  width: 200px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  transform: rotate(45deg);
+  z-index: 0;
+}
+
+.top-right-shape {
+  position: absolute;
+  top: 50px;
+  right: -100px;
+  width: 300px;
+  height: 150px;
+  background-color: #1a3297;
+  border-radius: 20px;
+  transform: skewX(-20deg);
+  z-index: 0;
+}
+
+.diagonal-line-1 {
+  position: absolute;
+  top: 100px;
+  left: 20%;
+  width: 150px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: rotate(20deg);
+  z-index: 0;
+}
+
+.diagonal-line-2 {
+  position: absolute;
+  top: 200px;
+  right: 15%;
+  width: 100px;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: rotate(-30deg);
+  z-index: 0;
+}
+
+/* --- Back Button (REMAINS THE SAME) --- */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Main Content Cards & Image (REMAINS THE SAME) --- */
+.contact-details-card-image,
+.contact-details-card-name,
+.contact-details-card-info {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.contact-details-card-image {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border: none;
+  margin-top: 80px;
+}
+
+.contact-image-wrapper {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transform: rotate(7deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contact-detail-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: rotate(-7deg);
+}
+
+.detail-label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.detail-value-large {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 10px;
+  /* Reduced margin to bring button closer */
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.detail-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* --- NEW: Edit Button Style --- */
+.edit-detail-button {
+  background-color: #ffc107;
+  /* Yellow/Amber color */
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  /* Fully rounded pill shape */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
+  /* Space below last name */
+  transition: background-color 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.edit-detail-button i {
+  font-size: 18px;
+}
+
+.edit-detail-button:hover {
+  background-color: #e0a800;
+  transform: translateY(-2px);
+}
+
+/* Adjust margin for the last detail value in a card */
+.contact-details-card-name .detail-value-large:last-of-type {
+  margin-bottom: 0;
+  /* Reset margin before the button */
+}
+
+.contact-details-card-info .detail-value:last-child {
+  margin-bottom: 0;
+}

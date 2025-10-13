@@ -1,0 +1,216 @@
+/* --- General Page Layout --- */
+.contact-list-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw; /* use vw for responsive website while px is fixed size  */
+  background-color: #e0f2f7;
+  font-family: "Arial", sans-serif;
+  color: #333;
+}
+.contact-avatar {
+    width: 100px; 
+    height: 100px;
+    border-radius: 50%; /* Keeps the image circular */
+    object-fit: cover;
+    vertical-align: middle; /* Align nicely with text */
+    margin-right: 10px; 
+}
+/* --- Scrollable Area --- */
+.contact-scroll-area {
+  height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* --- Search and Filter Section (Can be styled further to match top part of image) --- */
+.search-filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.search-bar {
+  flex-grow: 1;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+}
+
+.filter-button,
+.new-contact-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+.filter-button {
+  background-color: #6c757d; 
+  color: white;
+}
+.filter-button:hover {
+  background-color: #5a6268;
+}
+
+.new-contact-button {
+  background-color: #007bff; 
+  color: white;
+}
+.new-contact-button:hover {
+  background-color: #0056b3;
+}
+
+/* --- Table Wrapper and Styling --- */
+.contact-table-wrapper {
+  overflow-x: auto; /* Allows horizontal scroll for wide tables */
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Subtle shadow for the table card */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* Remove double borders */
+  background-color: white; /* Ensure table background is white */
+}
+
+/* Table Headers */
+th {
+  padding: 12px 15px;
+  text-align: center; /* Default left align */
+  background-color: #f2f2f2; /* Light grey background for headers */
+  border-bottom: 2px solid #ddd; /* Darker border at bottom of header row */
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Table Data Cells */
+td {
+  padding: 12px 15px;
+  text-align: center; /* Default left align */
+  border-bottom: 1px solid #eee; /* Lighter border between rows */
+  vertical-align: middle;
+  color: #555;
+  font-size: 15px;
+}
+
+/* Specific column alignment for Image */
+.table-img-header,
+.table-img-cell {
+  width: 20f0px;
+  text-align: center; 
+}
+
+.contact-table-avatar {
+  width: 10px;
+  height: 10px;
+
+}
+
+.action-buttons-cell {
+  white-space: nowrap; /* Keep buttons on one line */
+  text-align: center; /* Center the buttons within the cell */
+}
+
+/* --- Table Row Hover Effect --- */
+tbody tr:hover {
+  background-color: #f5f5f5; /* Light hover effect */
+}
+
+/* Remove bottom border for the last row */
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Action Buttons in Table --- */
+.action-button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  display: inline-flex; /* Align icon and text */
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  margin: 0 2px; /* Small margin between buttons */
+}
+
+/* Details Button (Blue) */
+.details-button {
+  background-color: #17a2b8; /* Teal-blue from image */
+  color: white;
+}
+.details-button:hover {
+  background-color: #138496;
+}
+
+/* Edit Button (Yellow) */
+.edit-button {
+  background-color: #ffc107; /* Yellow from image */
+  color: #333;
+}
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+/* Delete Button (Red) */
+.delete-button {
+  background-color: #dc3545; /* Red from image */
+  color: white;
+}
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+
+.user-header {
+  width: 100%;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end; /* Push content to the right */
+  align-items: center;
+  background-color: #f2f2f2; /* Light background for visibility */
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+  gap: 15px;
+}
+
+.logout-button {
+  background-color: #dc3545; /* Red */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}

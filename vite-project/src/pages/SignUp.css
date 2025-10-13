@@ -1,0 +1,132 @@
+
+.signup-page-container {
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
+    background-color: #e0f2f7; 
+    font-family: 'Arial', sans-serif;
+
+}
+
+
+.auth-card {
+  background-color: white;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 380px;
+  margin: 20px;
+}
+
+.auth-header {
+  font-size: 1.8em;
+  font-weight: 500;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.auth-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.auth-button {
+  padding: 12px 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.2s;
+}
+
+.primary-button {
+  background-color: #007bff;
+  color: white;
+  margin-top: 10px;
+}
+
+.primary-button:hover {
+  background-color: #0056b3;
+}
+
+.auth-footer-text {
+    font-size: 0.95em;
+    margin: 15px 0 20px 0;
+}
+
+.switch-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-divider {
+    position: relative;
+    text-align: center;
+    color: #888;
+    margin: 20px 0;
+    font-size: 0.9em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #eee;
+}
+
+.auth-divider::before {
+    left: 0;
+}
+
+.auth-divider::after {
+    right: 0;
+}
+
+.social-button {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+        justify-content: center;
+
+}
+
+.facebook-button {
+    background-color: #4267B2;
+    color: white;
+    border-color: #4267B2;
+    align-items: center;
+    justify-content: center;
+}
+
+.google-button {
+    color: #333;
+    border-color: #ccc;
+}
