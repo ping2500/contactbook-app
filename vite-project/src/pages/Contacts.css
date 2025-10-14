@@ -33,10 +33,12 @@
   width: 100%;
   margin-bottom: 20px;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .search-bar {
   flex-grow: 1;
+  min-width: 180px;
   padding: 10px 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -44,18 +46,15 @@
   outline: none;
 }
 
-.filter-button,
 .new-contact-button {
+  text-decoration: none;
+  display: inline-block;
+  flex-shrink: 0; 
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   font-size: 15px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 500;
 }
 
 .filter-button {
@@ -69,9 +68,6 @@
 .new-contact-button {
   background-color: #007bff; 
   color: white;
-}
-.new-contact-button:hover {
-  background-color: #0056b3;
 }
 
 /* --- Table Wrapper and Styling --- */

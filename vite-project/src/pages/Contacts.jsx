@@ -1,23 +1,46 @@
-// src/pages/Contacts.jsx (FINAL MODIFIED VERSION with User Header)
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Contacts.css";
 
-// Assuming you have a utility file for getting the token and user info
-// You MUST create src/utils/auth.utils.js with getAuthHeader, isAdmin, and logout
+// utility file for getting the token and user info
 import { getAuthHeader, isAdmin, logout } from "../utils/auth.utils";
 
 const Contacts = () => {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // ⭐ NEW STATE: Store the user object for display
+  // NEW STATE: Store the user object for display
   const [loggedInUser, setLoggedInUser] = useState(null);
+  //state for search functionality
+  const [searchTerm, setSearchTerm]= useState('');
 
   const API_BASE = "http://localhost:5000/api/contacts";
+  
+  // authentication check
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    logout(); 
+    useEffect(() => { navigate("/"); }, [navigate]);
+    return null;
+  }
+  
+ // search functionality
+  const filteredContacts = useMemo(() => { // useMemo memorize a value and to do complex calculation
+    if (!searchTerm) {
+      return contacts;
+    }
 
-  // --- Handlers ---
+    const lowerCaseSearch = searchTerm.toLowerCase();
+
+    return contacts.filter(contact => 
+      contact.firstName.toLowerCase().includes(lowerCaseSearch) ||
+      contact.lastName.toLowerCase().includes(lowerCaseSearch) ||
+      contact.Email.toLowerCase().includes(lowerCaseSearch) ||
+      contact.PhoneNumber.includes(lowerCaseSearch)
+    );
+  }, [contacts, searchTerm]); // Recalculate only when contacts or searchTerm changes
+
 
   useEffect(() => {
     const userJson = localStorage.getItem("user");
@@ -25,8 +48,10 @@ const Contacts = () => {
 
     if (!token || !userJson) {
       // If no token or user data, the user is NOT logged in.
+      alert("User already logged in ");
       logout(); // Clean up any potentially bad local storage data
-      navigate("/"); // Redirect to Login page
+       // Redirect to Login page
+      navigate("/");
       return; // Stop execution of this effect
     }
 
@@ -35,13 +60,14 @@ const Contacts = () => {
     } catch (e) {
       // Failed to parse user JSON
       logout();
-      navigate("/");
+    
       return;
     }
 
     // If logged in, proceed to fetch contacts
     fetchContacts();
   }, [navigate]); // navigate is a dependency
+
   const handleLogout = () => {
     logout(); // Calls the utility to clear localStorage
     navigate("/"); // Redirects to the login page
@@ -114,28 +140,6 @@ const Contacts = () => {
     }
   };
 
-  // --- Lifecycle ---
-  useEffect(() => {
-    const userJson = localStorage.getItem("user");
-    const token = localStorage.getItem("authToken");
-
-    if (!token || !userJson) {
-      logout();
-      navigate("/");
-      return;
-    }
-
-    try {
-      // ⭐ Set the loggedInUser state from localStorage
-      const user = JSON.parse(userJson);
-      setLoggedInUser(user);
-    } catch (e) {
-      logout();
-      navigate("/");
-    }
-
-    fetchContacts();
-  }, [navigate]);
 
   // --- Render ---
 
@@ -145,7 +149,7 @@ const Contacts = () => {
     );
   }
 
-  // ⭐ New Header Component (Top Header)
+  //  New Header Component (Top Header)
   const UserHeader = () => (
     <div className="user-header">
       {loggedInUser && (
@@ -163,14 +167,16 @@ const Contacts = () => {
 
   return (
     <div className="contact-list-page-container">
-      {/* ⭐ NEW: User Info and Logout Header */}
+      {/* NEW: User Info and Logout Header */}
       <UserHeader />
 
       <div className="search-filter-section">
         <input
           type="text"
-          placeholder="Search contacts..."
+          placeholder="Search contacts by Name..."
           className="search-bar"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
 
         {/* Only show New Contact button if user is Admin */}
@@ -195,8 +201,8 @@ const Contacts = () => {
             </tr>
           </thead>
           <tbody>
-            {contacts.length > 0 ? (
-              contacts.map((contact) => (
+            {filteredContacts.length > 0 ? (
+              filteredContacts.map((contact) => (
                 <tr key={contact.id}>
                   <td>
                     <img
@@ -207,6 +213,7 @@ const Contacts = () => {
                       alt={`${contact.firstName} ${contact.lastName}`}
                       className="contact-avatar"
                     />
+                    {contact.firstName} {contact.lastName}
                   </td>
                   <td>{contact.firstName}</td>
                   <td>{contact.lastName}</td>
@@ -237,7 +244,7 @@ const Contacts = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
+                <td colSpan="5" style={{ textAlign: "center" }}>
                   No contacts found.
                 </td>
               </tr>

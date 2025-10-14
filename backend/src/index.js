@@ -1,4 +1,3 @@
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -20,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 let pool; // Connection pool variable
 
-// --- 1. Database Connection & Initial Admin Setup ---
+// ---  Database Connection & Initial Admin Setup ---
 const initializeDB = async () => {
   try {
     // Create the connection pool
@@ -192,27 +191,41 @@ app.post(CONTACT_BASE, authenticateToken, authorizeAdmin, async (req, res) => {
 });
 
 // Only Admin can EDIT (PUT) contacts.
-app.put(`${CONTACT_BASE}/:id`, authenticateToken, authorizeAdmin, async (req, res) => {
+app.put(
+  `${CONTACT_BASE}/:id`,
+  authenticateToken,
+  authorizeAdmin,
+  async (req, res) => {
     try {
-        const { firstName, lastName, PhoneNumber, Email, imageUrl } = req.body;
-        const contactId = req.params.id;
+      const { firstName, lastName, PhoneNumber, Email, imageUrl } = req.body;
+      const contactId = req.params.id;
 
-        const [result] = await pool.execute(
-            `UPDATE contacts 
+      const [result] = await pool.execute(
+        `UPDATE contacts 
              SET firstName = ?, lastName = ?, PhoneNumber = ?, Email = ?, imageUrl = ? 
              WHERE id = ?`,
-            [firstName, lastName, PhoneNumber, Email, imageUrl, contactId]
-        );
+        [firstName, lastName, PhoneNumber, Email, imageUrl, contactId]
+      );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ success: false, message: 'Contact not found or no changes made.' });
-        }
-        res.status(200).json({ success: true, message: 'Contact updated successfully!' });
+      if (result.affectedRows === 0) {
+        return res
+          .status(404)
+          .json({
+            success: false,
+            message: "Contact not found or no changes made.",
+          });
+      }
+      res
+        .status(200)
+        .json({ success: true, message: "Contact updated successfully!" });
     } catch (error) {
-        console.error('PUT Contact Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to update contact.' });
+      console.error("PUT Contact Error:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Failed to update contact." });
     }
-});
+  }
+);
 // Only Admin can DELETE contacts.
 app.delete(
   `${CONTACT_BASE}/:id`,
@@ -266,12 +279,10 @@ app.post("/api/signup", async (req, res) => {
   const ROLE = "user"; // Default role for standard sign-ups
 
   if (!username || !email || !password) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "All fields (username, email, password) are required.",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "All fields (username, email, password) are required.",
+    });
   }
 
   try {
@@ -295,12 +306,10 @@ app.post("/api/signup", async (req, res) => {
     await pool.execute(query, [username, email, hashedPassword, ROLE]);
 
     // Success response
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "User registered successfully! You can now log in.",
-      });
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully! You can now log in.",
+    });
   } catch (error) {
     console.error("Sign-up Error:", error);
     res

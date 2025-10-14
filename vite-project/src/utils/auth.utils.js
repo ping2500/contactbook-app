@@ -11,7 +11,7 @@ export const getUserInfo = () => {
     // Check if token is expired
     if (decoded.exp * 1000 < Date.now()) {
       localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
+      localStorage.removeItem("user");//  user key holds the value of {username: administrator and role: admin}
       return null;
     }
     return decoded;
@@ -23,7 +23,7 @@ export const getUserInfo = () => {
   }
 };
 
-// Helper function to check if the user is an admin
+//  function to check if the user is an admin
 export const isAdmin = () => {
   try {
     const userJson = localStorage.getItem("user");
@@ -36,10 +36,10 @@ export const isAdmin = () => {
   }
 };
 
-// Helper function for logout
+//  function for logout
 export const logout = () => {
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("user");
+  localStorage.removeItem("authToken");// Removes the bearer token
+  localStorage.removeItem("user"); // Remove the user data
 };
 
 // Helper to get token for headers

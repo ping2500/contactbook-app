@@ -12,16 +12,16 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
 
  // User can't access login page without logging out
-  useEffect(() =>{
-
-    const token = localStorage.getItem('authToken');
-
-    if (token){
-      alert('User is already logged in.');
-      navigate('/contact');
-    }
-  }, [navigate]);
-  
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    //  use useEffect for navigation to ensure it happens after the render cycle.
+    useEffect(() => {
+        alert('User is already logged in.');
+        navigate('/contact'); // Redirect to the contacts page
+    }, [navigate]);
+    
+    return null; // Immediately returns null, preventing the Login page JSX from rendering
+  }
  
 
   const handleLogin = async (e) => {

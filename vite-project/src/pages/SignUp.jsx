@@ -6,7 +6,7 @@ const API_BASE = "http://localhost:5000/api"; // API Base URL
 
 const SignupPage = () => {
   const navigate = useNavigate();
-  // ⭐ Add state for username
+  // Add state for username
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,13 +27,13 @@ const SignupPage = () => {
     }
 
     try {
-      // ⭐ API Call to the backend's sign-up endpoint
+      // API Call to the backend's sign-up endpoint
       const response = await fetch(`${API_BASE}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // ⭐ Send username, email, and password to the server
+        //  Send username, email, and password to the server
         body: JSON.stringify({ username, email, password }),
       });
 
@@ -58,7 +58,7 @@ const SignupPage = () => {
         <h1 className="auth-header">Signup</h1>
 
         <form className="auth-form" onSubmit={handleSignup}>
-          {/* ⭐ USERNAME FIELD */}
+          {/*  USERNAME FIELD */}
           <input
             type="text"
             placeholder="Username"
