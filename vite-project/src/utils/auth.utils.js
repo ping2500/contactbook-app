@@ -1,49 +1,41 @@
-import { jwtDecode } from "jwt-decode";
-
-// Helper function to get user info from the token
-export const getUserInfo = () => {
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    return null;
-  }
-  try {
-    const decoded = jwtDecode(token);
-    // Check if token is expired
-    if (decoded.exp * 1000 < Date.now()) {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");//  user key holds the value of {username: administrator and role: admin}
-      return null;
-    }
-    return decoded;
-  } catch (e) {
-    // Handle invalid token
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
-    return null;
-  }
-};
-
-//  function to check if the user is an admin
-export const isAdmin = () => {
-  try {
-    const userJson = localStorage.getItem("user");
-    if (!userJson) return false;
-    const user = JSON.parse(userJson);
-    return user && user.role === "admin";
-  } catch (e) {
-    console.error("Failed to parse user data from localStorage:", e);
-    return false;
-  }
-};
-
-//  function for logout
-export const logout = () => {
-  localStorage.removeItem("authToken");// Removes the bearer token
-  localStorage.removeItem("user"); // Remove the user data
-};
-
-// Helper to get token for headers
+/**
+ * Get authorization header with JWT token
+ * @returns {Object} Authorization header object
+ */
 export const getAuthHeader = () => {
-  const token = localStorage.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+  const token = localStorage.getItem("token")
+  return {
+    Authorization: `Bearer ${token}`,
+  }
+}
+
+/**
+ * Check if user is authenticated
+ * @returns {boolean} True if token exists
+ */
+export const isAuthenticated = () => {
+  return !!localStorage.getItem("token")
+}
+
+/**
+ * Store JWT token
+ * @param {string} token - JWT token
+ */
+export const setAuthToken = (token) => {
+  localStorage.setItem("token", token)
+}
+
+/**
+ * Remove JWT token (logout)
+ */
+export const removeAuthToken = () => {
+  localStorage.removeItem("token")
+}
+
+/**
+ * Get stored JWT token
+ * @returns {string|null} JWT token or null
+ */
+export const getAuthToken = () => {
+  return localStorage.getItem("token")
+}

@@ -33,3 +33,10 @@
     align-items: center; 
 }
 
+/* ✨ CHANGE: Add background image for the app root */
+.app-bg {
+  background-image: url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

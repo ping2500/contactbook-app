@@ -3,7 +3,7 @@
 const dbConfig = {
     host: 'localhost',      // Your MySQL host
     user: 'root',           // Your MySQL username
-    password: 'root', 
+    password: 'root123', 
     database: 'contactbook', // We will create this database next
     waitForConnections: true,
     connectionLimit: 10,

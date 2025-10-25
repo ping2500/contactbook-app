@@ -142,16 +142,60 @@ app.post("/api/login", async (req, res) => {
 // All Users (Admin/Regular) can VIEW (GET) contacts, but MUST be logged in.
 app.get(CONTACT_BASE, authenticateToken, async (req, res) => {
   try {
-    // Query to fetch all contacts
-    const [rows] = await pool.execute("SELECT * FROM contacts");
-    res.status(200).json(rows);
+    let page = parseInt(req.query.page, 10);
+    let limit = parseInt(req.query.limit, 10);
+    const sort = (req.query.sort || "asc").toLowerCase() === "desc" ? "DESC" : "ASC";
+    const search = (req.query.search || "").trim();
+
+    if (isNaN(page) || page < 1) page = 1;
+    if (isNaN(limit) || limit < 1) limit = 10;
+
+    const offset = (page - 1) * limit;
+
+    console.log("Pagination debug:", { page, limit, offset, sort, search });
+
+    let sql = `
+      SELECT id, imageUrl, firstName, lastName, PhoneNumber, Email
+      FROM contacts
+    `;
+    const params = [];
+
+    if (search) {
+      sql += ` WHERE firstName LIKE ? OR lastName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? `;
+      const like = `%${search}%`;
+      params.push(like, like, like, like);
+    }
+
+    // ✅ Inline numeric values
+    sql += ` ORDER BY firstName ${sort} LIMIT ${limit} OFFSET ${offset}`;
+
+    const [rows] = await pool.query(sql, params);
+
+    const countSql = `
+      SELECT COUNT(*) as total FROM contacts
+      ${search ? "WHERE firstName LIKE ? OR lastName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ?" : ""}
+    `;
+    const [countRows] = await pool.query(
+      countSql,
+      search ? [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`] : []
+    );
+
+    const totalContacts = countRows[0].total;
+    const totalPages = Math.ceil(totalContacts / limit);
+
+    res.status(200).json({
+      success: true,
+      contacts: rows,
+      totalContacts,
+      totalPages,
+      currentPage: page,
+    });
   } catch (error) {
-    console.error("GET All Contacts Error:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch contacts." });
+    console.error("GET /api/contacts Error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch contacts." });
   }
 });
+
 
 // Only Admin can ADD (POST) new contacts.
 app.post(CONTACT_BASE, authenticateToken, authorizeAdmin, async (req, res) => {

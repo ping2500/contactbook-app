@@ -210,3 +210,33 @@ tbody tr:last-child td {
 .logout-button:hover {
   background-color: #c82333;
 }
+table td, table th {
+  vertical-align: middle;
+}
+
+/* Contact thumbnail class (60x60) */
+.contact-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 9999px; /* fully rounded */
+  object-fit: cover;
+  display: block;
+}
+
+/* subtle card shadow for mobile cards */
+@media (max-width: 1024px) {
+  article[role="article"], .card {
+    box-shadow: 0 4px 10px rgba(16,24,40,0.06);
+  }
+}
+
+/* ensure fixed CONTACT column width doesn't collapse */
+th:first-child, td:first-child {
+  min-width: 240px;
+}
+
+/* Accessibility focus outline */
+:focus {
+  outline: 3px solid rgba(99,102,241,0.25);
+  outline-offset: 2px;
+}

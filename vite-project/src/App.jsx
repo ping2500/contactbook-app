@@ -1,45 +1,89 @@
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom'; 
-import './App.css'; 
-import Contacts from './pages/Contacts';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
-import './index.css'
-import AddNewContact from './pages/AddNewContact';
-import ViewContact from './pages/ViewContact';
-import UpdateContact from './pages/UpdateContact';
+"use client"
 
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { useEffect, useState } from "react"
 
-function App() {
-  return (
-    <div className="app-layout-container"> 
-      <nav className="app-nav-bar"> 
-        <ul style={{ listStyleType: 'none', margin: 0, padding: 0 }}>
-         
-          <li style={{ display: 'inline' }}>
-            <Link to="/contact" style={{ color: 'white', textDecoration: 'none' }}>
-              Contact
-            </Link>
-          </li>
-        </ul>
-      </nav>
+// Pages
+import Login from "./pages/Login"
+import SignUp from "./pages/SignUp"
+import Dashboard from "./pages/Dashboard"
+import Contacts from "./pages/Contacts"
+import AddNewContact from "./pages/AddNewContact"
+import UpdateContact from "./pages/UpdateContact"
+import ViewContact from "./pages/ViewContact"
 
-      {/* Main area that contains the routes for pages */}
-      <main className="main-route-wrapper"> 
-        <Routes>
-          
-          <Route path="/" element={<Login />} />{/*  Main landing page */}
-          <Route path="/signUp" element={<SignUp />} />
-          <Route path="/contact" element={<Contacts />} /> 
-          <Route path="/add-contact" element={<AddNewContact />} />
-          <Route path='/view-contact/:id' element={<ViewContact />} />
-          <Route path='/edit-contact/:id' element={<UpdateContact />}/>
+// Protected Route Component
+function ProtectedRoute({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(null)
 
-          <Route path="*" element={<h1 className="full-height-page" style={{ color: 'white' }}>404: Page Not Found</h1>} />
-        </Routes>
-      </main>
-    </div>
-  )
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    setIsAuthenticated(!!token)
+  }, [])
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+        <div className="text-slate-400">Loading...</div>
+      </div>
+    )
+  }
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />
 }
 
-export default App;
+export default function App() {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+
+      {/* Protected Routes */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contacts"
+        element={
+          <ProtectedRoute>
+            <Contacts />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contacts/add"
+        element={
+          <ProtectedRoute>
+            <AddNewContact />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contacts/update/:id"
+        element={
+          <ProtectedRoute>
+            <UpdateContact />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contacts/view/:id"
+        element={
+          <ProtectedRoute>
+            <ViewContact />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Default Route */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  );
+}
