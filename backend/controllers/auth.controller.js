@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs"
 import pool from "../config/database.js"
 import { generateToken } from "../utils/jwt.js"
 import { validateEmail, validatePassword } from "../utils/validation.js"
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   try {
@@ -103,3 +104,83 @@ export const login = async (req, res) => {
   }
 }
 
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email, password, role } = req.body;
+
+    // Input validation
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    const connection = await pool.getConnection();
+
+    // Check if user exists
+    const [existingUser] = await connection.query("SELECT * FROM users WHERE id = ?", [userId]);
+    if (existingUser.length === 0) {
+      connection.release();
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Prepare update fields
+    const fields = [];
+    const values = [];
+
+    if (name) {
+      fields.push("name = ?");
+      values.push(name);
+    }
+
+    if (email) {
+      fields.push("email = ?");
+      values.push(email);
+    }
+
+    if (role) {
+      fields.push("role = ?");
+      values.push(role);
+    }
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      fields.push("password = ?");
+      values.push(hashedPassword);
+    }
+
+    // No updates provided
+    if (fields.length === 0) {
+      connection.release();
+      return res.status(400).json({ success: false, message: "No valid fields to update" });
+    }
+
+    values.push(userId);
+
+    // Perform update
+    const [result] = await connection.query(
+      `UPDATE users SET ${fields.join(", ")}, updatedAt = NOW() WHERE id = ?`,
+      values
+    );
+
+    // Fetch updated user
+    const [updatedUser] = await connection.query(
+      "SELECT id, email, role FROM users WHERE id = ?",
+      [userId]
+    );
+
+    connection.release();
+
+    // Generate new token
+    const token = generateToken(updatedUser[0]);
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      token,
+      user: updatedUser[0],
+    });
+  } catch (error) {
+    console.error("[UPDATE PROFILE ERROR]", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
