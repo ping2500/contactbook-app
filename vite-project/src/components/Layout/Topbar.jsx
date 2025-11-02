@@ -1,10 +1,25 @@
 "use client"
 
 import { useState } from "react"
-import { Bell, Search, ChevronDown, User } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../../context/AuthContext"
+import { Bell, Search, ChevronDown, User, LogOut, Settings } from "lucide-react"
 
 export default function Topbar({ userName = "User" }) {
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const navigate = useNavigate()
+  const { logout } = useAuth()
+
+  const handleProfileSettings = () => {
+    navigate("/profile-settings")
+    setShowProfileMenu(false)
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate("/login")
+    setShowProfileMenu(false)
+  }
 
   return (
     <header className="fixed top-0 right-0 left-0 lg:left-64 h-16 bg-white/5 backdrop-blur-xl border-b border-white/10 z-30">
@@ -43,14 +58,19 @@ export default function Topbar({ userName = "User" }) {
             {/* Dropdown Menu */}
             {showProfileMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl overflow-hidden">
-                <button className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-white/10 transition-all">
+                <button
+                  onClick={handleProfileSettings}
+                  className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-white/10 transition-all flex items-center gap-2"
+                >
+                  <Settings size={16} />
                   Profile Settings
                 </button>
-                <button className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-white/10 transition-all">
-                  Preferences
-                </button>
                 <hr className="border-white/10" />
-                <button className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-all">
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-all flex items-center gap-2"
+                >
+                  <LogOut size={16} />
                   Logout
                 </button>
               </div>

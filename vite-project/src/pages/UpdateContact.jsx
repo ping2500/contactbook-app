@@ -5,32 +5,30 @@ import { useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import DashboardLayout from "../components/Layout/DashboardLayout"
 import ContactForm from "../components/Contacts/ContactForm"
+import { getContactById, updateContact } from "../services/api"
+import { useAuth } from "../context/AuthContext"
 
 export default function UpdateContact() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user, isAdmin } = useAuth()
   const [contact, setContact] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
-  // Fetch contact details
   useEffect(() => {
+    if (!isAdmin()) {
+      navigate("/contacts")
+      return
+    }
+
     const fetchContact = async () => {
       try {
-        const token = localStorage.getItem("token")
-
-        // API call to fetch contact by ID
-        const response = await fetch(`/api/contacts/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (!response.ok) throw new Error("Failed to fetch contact")
-
-        const data = await response.json()
-        setContact(data)
+        const response = await getContactById(id)
+        setContact(response.data)
       } catch (error) {
         console.error("Error fetching contact:", error)
+        setError("Failed to load contact")
         navigate("/contacts")
       } finally {
         setLoading(false)
@@ -38,27 +36,29 @@ export default function UpdateContact() {
     }
 
     fetchContact()
-  }, [id, navigate])
+  }, [id, navigate, isAdmin])
 
   const handleSubmit = async (formData) => {
     try {
-      const token = localStorage.getItem("token")
+      // Create FormData for multipart upload
+      const data = new FormData()
+      data.append("name", formData.name)
+      data.append("email", formData.email)
+      data.append("phone", formData.phone)
+      data.append("company", formData.company)
+      data.append("title", formData.jobTitle)
+      data.append("category", formData.type)
 
-      // API call to update contact
-      const response = await fetch(`/api/contacts/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      })
+      // Handle image file if present
+      if (formData.imageFile) {
+        data.append("image", formData.imageFile)
+      }
 
-      if (!response.ok) throw new Error("Failed to update contact")
-
+      await updateContact(id, data)
       navigate("/contacts")
     } catch (error) {
       console.error("Error updating contact:", error)
+      setError(error.response?.data?.message || "Failed to update contact")
     }
   }
 
@@ -67,6 +67,22 @@ export default function UpdateContact() {
       <DashboardLayout>
         <div className="flex items-center justify-center py-12">
           <div className="text-slate-400">Loading contact...</div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-red-400 mb-4">{error}</p>
+          <button
+            onClick={() => navigate("/contacts")}
+            className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-all"
+          >
+            Back to Contacts
+          </button>
         </div>
       </DashboardLayout>
     )

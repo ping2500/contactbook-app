@@ -1,7 +1,7 @@
 "use client"
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { Routes, Route, Navigate } from "react-router-dom"
+import { useAuth } from "./context/AuthContext"
 
 // Pages
 import Login from "./pages/Login"
@@ -11,17 +11,13 @@ import Contacts from "./pages/Contacts"
 import AddNewContact from "./pages/AddNewContact"
 import UpdateContact from "./pages/UpdateContact"
 import ViewContact from "./pages/ViewContact"
+import ProfileSettings from "./pages/ProfileSettings"
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(null)
+  const { isAuthenticated, loading } = useAuth()
 
-  useEffect(() => {
-    const token = localStorage.getItem("token")
-    setIsAuthenticated(!!token)
-  }, [])
-
-  if (isAuthenticated === null) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
         <div className="text-slate-400">Loading...</div>
@@ -29,7 +25,7 @@ function ProtectedRoute({ children }) {
     )
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />
+  return isAuthenticated() ? children : <Navigate to="/login" replace />
 }
 
 export default function App() {
@@ -80,10 +76,18 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/profile-settings"
+        element={
+          <ProtectedRoute>
+            <ProfileSettings />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Default Route */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
-  );
+  )
 }

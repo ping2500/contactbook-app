@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { Mail, Lock, User, Eye, EyeOff, Loader } from "lucide-react"
+import { useAuth } from "../context/AuthContext"
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const navigate = useNavigate()
+  const { signup } = useAuth()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -34,29 +36,10 @@ export default function SignUp() {
     setLoading(true)
 
     try {
-      // API call to backend signup endpoint
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.message || "Signup failed")
-        return
-      }
-
-      // Store JWT token
-      localStorage.setItem("token", data.token)
+      await signup(formData.name, formData.email, formData.password, "user")
       navigate("/dashboard")
     } catch (err) {
-      setError("An error occurred. Please try again.")
+      setError(err.message || "Signup failed")
     } finally {
       setLoading(false)
     }

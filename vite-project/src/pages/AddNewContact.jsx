@@ -4,29 +4,32 @@ import { useNavigate } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import DashboardLayout from "../components/Layout/DashboardLayout"
 import ContactForm from "../components/Contacts/ContactForm"
+import { createContact } from "../services/api"
 
 export default function AddNewContact() {
   const navigate = useNavigate()
 
   const handleSubmit = async (formData) => {
     try {
-      const token = localStorage.getItem("token")
+      // Create FormData for multipart upload
+      const data = new FormData()
+      data.append("name", formData.name)
+      data.append("email", formData.email)
+      data.append("phone", formData.phone)
+      data.append("company", formData.company)
+      data.append("title", formData.jobTitle)
+      data.append("category", formData.type)
 
-      // API call to create new contact
-      const response = await fetch("/api/contacts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      })
+      // Handle image file if present
+      if (formData.imageFile) {
+        data.append("image", formData.imageFile)
+      }
 
-      if (!response.ok) throw new Error("Failed to create contact")
-
+      await createContact(data)
       navigate("/contacts")
     } catch (error) {
       console.error("Error creating contact:", error)
+      alert(error.response?.data?.message || "Failed to create contact")
     }
   }
 

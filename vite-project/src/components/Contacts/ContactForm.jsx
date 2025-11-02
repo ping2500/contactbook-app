@@ -12,7 +12,7 @@ export default function ContactForm({ initialData = null, onSubmit, onCancel }) 
       company: "",
       jobTitle: "",
       type: "Personal",
-      image: null,
+      imageFile: null,
     },
   )
   const [imagePreview, setImagePreview] = useState(initialData?.image || null)
@@ -29,7 +29,7 @@ export default function ContactForm({ initialData = null, onSubmit, onCancel }) 
       const reader = new FileReader()
       reader.onloadend = () => {
         setImagePreview(reader.result)
-        setFormData((prev) => ({ ...prev, image: reader.result }))
+        setFormData((prev) => ({ ...prev, imageFile: file }))
       }
       reader.readAsDataURL(file)
     }
@@ -58,7 +58,7 @@ export default function ContactForm({ initialData = null, onSubmit, onCancel }) 
                 type="button"
                 onClick={() => {
                   setImagePreview(null)
-                  setFormData((prev) => ({ ...prev, image: null }))
+                  setFormData((prev) => ({ ...prev, imageFile: null }))
                 }}
                 className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
               >

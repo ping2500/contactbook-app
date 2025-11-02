@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { Mail, Lock, Eye, EyeOff, Loader } from "lucide-react"
+import { useAuth } from "../context/AuthContext"
 
 export default function Login() {
   const [email, setEmail] = useState("")
@@ -11,6 +12,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -18,25 +20,10 @@ export default function Login() {
     setError("")
 
     try {
-      // API call to backend login endpoint
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.message || "Login failed")
-        return
-      }
-
-      // Store JWT token
-      localStorage.setItem("token", data.token)
+      await login(email, password)
       navigate("/dashboard")
     } catch (err) {
-      setError("An error occurred. Please try again.")
+      setError(err.message || "Login failed")
     } finally {
       setLoading(false)
     }

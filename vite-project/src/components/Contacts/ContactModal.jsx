@@ -3,7 +3,7 @@
 import { X, Phone, Mail, Edit2, Trash2, Copy } from "lucide-react"
 import { useState } from "react"
 
-export default function ContactModal({ contact, onClose, onEdit, onDelete }) {
+export default function ContactModal({ contact, onClose, onEdit, onDelete, isAdmin = false }) {
   const [copied, setCopied] = useState(null)
 
   const getInitials = (name) => {
@@ -48,7 +48,7 @@ export default function ContactModal({ contact, onClose, onEdit, onDelete }) {
               )}
             </div>
             <h3 className="text-2xl font-bold text-white text-center">{contact.name}</h3>
-            <p className="text-slate-400 text-sm mt-1">{contact.jobTitle || "No title"}</p>
+            <p className="text-slate-400 text-sm mt-1">{contact.title || "No title"}</p>
             {contact.company && <p className="text-slate-500 text-xs mt-1">{contact.company}</p>}
           </div>
 
@@ -92,40 +92,42 @@ export default function ContactModal({ contact, onClose, onEdit, onDelete }) {
           </div>
 
           {/* Type Badge */}
-          {contact.type && (
+          {contact.category && (
             <div
               className={`px-3 py-2 rounded-lg text-sm font-medium text-center ${
-                contact.type === "Work" ? "bg-blue-500/20 text-blue-300" : "bg-purple-500/20 text-purple-300"
+                contact.category === "Work" ? "bg-blue-500/20 text-blue-300" : "bg-purple-500/20 text-purple-300"
               }`}
             >
-              {contact.type} Contact
+              {contact.category} Contact
             </div>
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 p-6 border-t border-white/10">
-          <button
-            onClick={() => {
-              onEdit()
-              onClose()
-            }}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg transition-all font-medium"
-          >
-            <Edit2 size={18} />
-            Edit
-          </button>
-          <button
-            onClick={() => {
-              onDelete()
-              onClose()
-            }}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition-all font-medium"
-          >
-            <Trash2 size={18} />
-            Delete
-          </button>
-        </div>
+        {/* Action Buttons - Only show for admins */}
+        {isAdmin && (
+          <div className="flex gap-3 p-6 border-t border-white/10">
+            <button
+              onClick={() => {
+                onEdit()
+                onClose()
+              }}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg transition-all font-medium"
+            >
+              <Edit2 size={18} />
+              Edit
+            </button>
+            <button
+              onClick={() => {
+                onDelete()
+                onClose()
+              }}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition-all font-medium"
+            >
+              <Trash2 size={18} />
+              Delete
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

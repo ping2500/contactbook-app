@@ -6,6 +6,8 @@ import { Plus, Search, Filter } from "lucide-react"
 import DashboardLayout from "../components/Layout/DashboardLayout"
 import ContactCard from "../components/Contacts/ContactCard"
 import ContactModal from "../components/Contacts/ContactModal"
+import { getContacts, deleteContact } from "../services/api"
+import { useAuth } from "../context/AuthContext"
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([])
@@ -14,32 +16,20 @@ export default function Contacts() {
   const [filterType, setFilterType] = useState("All")
   const [selectedContact, setSelectedContact] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   // Fetch contacts from backend
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const token = localStorage.getItem("token")
-        if (!token) {
-          navigate("/login")
-          return
-        }
-
-        // API call to fetch contacts
-        const response = await fetch("/api/contacts", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (!response.ok) throw new Error("Failed to fetch contacts")
-
-        const data = await response.json()
-        setContacts(data)
-        setFilteredContacts(data)
+        const response = await getContacts()
+        setContacts(response.data)
+        setFilteredContacts(response.data)
       } catch (error) {
         console.error("Error fetching contacts:", error)
+        setError("Failed to load contacts")
       } finally {
         setLoading(false)
       }
@@ -62,7 +52,7 @@ export default function Contacts() {
     }
 
     if (filterType !== "All") {
-      filtered = filtered.filter((contact) => contact.type === filterType)
+      filtered = filtered.filter((contact) => contact.category === filterType)
     }
 
     setFilteredContacts(filtered)
@@ -72,20 +62,12 @@ export default function Contacts() {
     if (!selectedContact) return
 
     try {
-      const token = localStorage.getItem("token")
-      const response = await fetch(`/api/contacts/${selectedContact.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (!response.ok) throw new Error("Failed to delete contact")
-
+      await deleteContact(selectedContact.id)
       setContacts(contacts.filter((c) => c.id !== selectedContact.id))
       setSelectedContact(null)
     } catch (error) {
       console.error("Error deleting contact:", error)
+      setError("Failed to delete contact")
     }
   }
 
@@ -98,14 +80,21 @@ export default function Contacts() {
             <h1 className="text-3xl font-bold text-white">Contacts</h1>
             <p className="text-slate-400 mt-1">{filteredContacts.length} contacts</p>
           </div>
-          <button
-            onClick={() => navigate("/contacts/add")}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg transition-all font-medium w-full md:w-auto"
-          >
-            <Plus size={20} />
-            Add Contact
-          </button>
+          {user?.role === "admin" && (
+            <button
+              onClick={() => navigate("/contacts/add")}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg transition-all font-medium w-full md:w-auto"
+            >
+              <Plus size={20} />
+              Add Contact
+            </button>
+          )}
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">{error}</div>
+        )}
 
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-3">
@@ -141,12 +130,14 @@ export default function Contacts() {
         ) : filteredContacts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 bg-white/5 border border-white/10 rounded-xl">
             <p className="text-slate-400 mb-4">No contacts found</p>
-            <button
-              onClick={() => navigate("/contacts/add")}
-              className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-all"
-            >
-              Create your first contact
-            </button>
+            {user?.role === "admin" && (
+              <button
+                onClick={() => navigate("/contacts/add")}
+                className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-all"
+              >
+                Create your first contact
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -164,6 +155,7 @@ export default function Contacts() {
           onClose={() => setSelectedContact(null)}
           onEdit={() => navigate(`/contacts/update/${selectedContact.id}`)}
           onDelete={handleDelete}
+          isAdmin={user?.role === "admin"}
         />
       )}
     </DashboardLayout>

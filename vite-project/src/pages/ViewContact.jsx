@@ -4,31 +4,25 @@ import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft, Mail, Phone, Building2, Briefcase } from "lucide-react"
 import DashboardLayout from "../components/Layout/DashboardLayout"
+import { getContactById } from "../services/api"
+import { useAuth } from "../context/AuthContext"
 
 export default function ViewContact() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user, isAdmin } = useAuth()
   const [contact, setContact] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const token = localStorage.getItem("token")
-
-        // API call to fetch contact by ID
-        const response = await fetch(`/api/contacts/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (!response.ok) throw new Error("Failed to fetch contact")
-
-        const data = await response.json()
-        setContact(data)
+        const response = await getContactById(id)
+        setContact(response.data)
       } catch (error) {
         console.error("Error fetching contact:", error)
+        setError("Failed to load contact")
         navigate("/contacts")
       } finally {
         setLoading(false)
@@ -52,6 +46,22 @@ export default function ViewContact() {
       <DashboardLayout>
         <div className="flex items-center justify-center py-12">
           <div className="text-slate-400">Loading contact...</div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-red-400 mb-4">{error}</p>
+          <button
+            onClick={() => navigate("/contacts")}
+            className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-all"
+          >
+            Back to Contacts
+          </button>
         </div>
       </DashboardLayout>
     )
@@ -85,7 +95,7 @@ export default function ViewContact() {
                 )}
               </div>
               <h2 className="text-3xl font-bold text-white text-center">{contact.name}</h2>
-              {contact.jobTitle && <p className="text-slate-400 mt-2">{contact.jobTitle}</p>}
+              {contact.title && <p className="text-slate-400 mt-2">{contact.title}</p>}
               {contact.company && <p className="text-slate-500 text-sm">{contact.company}</p>}
             </div>
 
@@ -118,39 +128,41 @@ export default function ViewContact() {
                   <p className="text-white">{contact.company}</p>
                 </div>
               )}
-              {contact.jobTitle && (
+              {contact.title && (
                 <div className="p-4 bg-white/5 border border-white/10 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Briefcase size={18} className="text-orange-400" />
                     <span className="text-sm text-slate-400">Job Title</span>
                   </div>
-                  <p className="text-white">{contact.jobTitle}</p>
+                  <p className="text-white">{contact.title}</p>
                 </div>
               )}
             </div>
 
             {/* Type Badge */}
-            {contact.type && (
+            {contact.category && (
               <div
                 className={`px-4 py-2 rounded-lg text-center font-medium ${
-                  contact.type === "Work" ? "bg-blue-500/20 text-blue-300" : "bg-purple-500/20 text-purple-300"
+                  contact.category === "Work" ? "bg-blue-500/20 text-blue-300" : "bg-purple-500/20 text-purple-300"
                 }`}
               >
-                {contact.type} Contact
+                {contact.category} Contact
               </div>
             )}
 
-            {/* Action Buttons */}
+            {/* Action Buttons - Only show edit for admins */}
             <div className="flex gap-3 pt-4">
-              <button
-                onClick={() => navigate(`/contacts/update/${contact.id}`)}
-                className="flex-1 px-4 py-2.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg transition-all font-medium"
-              >
-                Edit Contact
-              </button>
+              {isAdmin() && (
+                <button
+                  onClick={() => navigate(`/contacts/update/${contact.id}`)}
+                  className="flex-1 px-4 py-2.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg transition-all font-medium"
+                >
+                  Edit Contact
+                </button>
+              )}
               <button
                 onClick={() => navigate("/contacts")}
-                className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all font-medium"
+                className={`${isAdmin() ? "flex-1" : "w-full"} px-4 py-2.5 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all font-medium`}
               >
                 Back to Contacts
               </button>
